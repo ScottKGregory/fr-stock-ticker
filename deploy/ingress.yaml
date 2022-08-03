@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fr-stock-ticker
+spec:
+  rules:
+    - host: fr-stock-ticker.scottkgregory.co.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fr-stock-ticker
+                port:
+                  number: 3000

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fr-stock-ticker
+data:
+  FR_DAYS: "5"
+  FR_SYMBOL: MSFT

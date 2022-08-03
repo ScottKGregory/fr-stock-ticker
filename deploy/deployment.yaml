@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fr-stock-ticker
+  labels:
+    app: fr-stock-ticker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: fr-stock-ticker
+  template:
+    metadata:
+      labels:
+        app: fr-stock-ticker
+        service: fr-stock-ticker
+    spec:
+      containers:
+        - name: fr-stock-ticker
+          image: scottgregory/fr-stock-ticker:v0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: 2000
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 2000
+          # TODO: These values aren't based on any particular data, would need to observe app behaviour to set appropriately
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          envFrom:
+            - configMapRef:
+                name: fr-stock-ticker
+            - secretRef:
+                name: fr-stock-ticker
+      volumes:
+        - name: config-volume
+          configMap:
+            name: fr-stock-ticker
