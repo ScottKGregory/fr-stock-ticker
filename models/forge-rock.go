@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// FrResponse is the primary response format for the API surface
 type FrResponse struct {
 	Symbol       string         `json:"symbol"`
 	Days         int            `json:"days"`
@@ -13,6 +14,7 @@ type FrResponse struct {
 	AverageClose float64        `json:"averageClose"`
 }
 
+// FrTimeSeries is used to represent time series data for a single day
 type FrTimeSeries struct {
 	Date   time.Time `json:"date"`
 	Open   float64   `json:"open"`
@@ -22,7 +24,8 @@ type FrTimeSeries struct {
 	Volume int       `json:"volume"`
 }
 
-func FrTimeSeriesFromAvTimeSeries(av *AvTimeSeries, date time.Time) (*FrTimeSeries, error) {
+// FrTimeSeriesFromAvTimeSeries converts an Alphavantage model to a Forge Rock model to be returned from the API surface
+func FrTimeSeriesFromAvTimeSeries(av AvTimeSeries, date time.Time) (*FrTimeSeries, error) {
 	open, err := strconv.ParseFloat(av.Open, 64)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing float for open data: %w", err)

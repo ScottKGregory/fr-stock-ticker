@@ -1,10 +1,12 @@
 package models
 
+// AvResponse is the response object returned by the Alphavantage query API
 type AvResponse struct {
 	MetaData   AvMetaData              `json:"Meta Data"`
 	TimeSeries map[string]AvTimeSeries `json:"Time Series (Daily)"`
 }
 
+// AvMetaData is the metadata format returned as part of the Alphavantage query API
 type AvMetaData struct {
 	Information   string `json:"1. Information"`
 	Symbol        string `json:"2. Symbol"`
@@ -13,6 +15,7 @@ type AvMetaData struct {
 	TimeZone      string `json:"5. Time Zone"`
 }
 
+// AvTimeSeries represents a single days time series data returned as part of the Alphavantage query API
 type AvTimeSeries struct {
 	Open   string `json:"1. open"`
 	High   string `json:"2. high"`

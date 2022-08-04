@@ -35,15 +35,17 @@ func main() {
 	}
 }
 
-func getConfig() (int, string, string, error) {
+// getConfig gets the applications required configuration values from environment variables. The could later be
+// expanded to pull config from various sources as required
+func getConfig() (days int, symbol string, apiKey string, err error) {
 	daysStr, daysOk := os.LookupEnv("FR_DAYS")
 	if !daysOk {
 		return 0, "", "", errors.New("FR_DAYS environment variable must be set")
 	}
 
-	days, err := strconv.Atoi(daysStr)
+	days, err = strconv.Atoi(daysStr)
 	if err != nil {
-		return 0, "", "", fmt.Errorf("FR_DAYS environment variable must be a valid integer: %s", err)
+		return 0, "", "", fmt.Errorf("FR_DAYS environment variable must be a valid integer: %w", err)
 	}
 
 	symbol, symbolOk := os.LookupEnv("FR_SYMBOL")

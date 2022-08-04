@@ -11,6 +11,8 @@ import (
 	"github.com/scottkgregory/fr-stock-ticker/services"
 )
 
+// Ticker is the primary handler for the API, it calls through to the supplied Alphavantage service to receive all available
+// time series data before sorting and filtering the response to only the requested days
 func Ticker(log zerolog.Logger, service services.AlphavantageOperations, days int, symbol string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resp, err := service.GetDailyTimeSeries(r.Context(), symbol)
@@ -34,6 +36,7 @@ func Ticker(log zerolog.Logger, service services.AlphavantageOperations, days in
 	}
 }
 
+// Filter days processes an Alphavantage response set and pulls only the last N days from it, sorting them before returning
 func filterDays(av map[string]models.AvTimeSeries, days int) ([]models.FrTimeSeries, error) {
 	ret := []models.FrTimeSeries{}
 	for k, v := range av {
@@ -42,9 +45,9 @@ func filterDays(av map[string]models.AvTimeSeries, days int) ([]models.FrTimeSer
 			return nil, fmt.Errorf("error parsing date: %w", err)
 		}
 
-		frTimeSeries, err := models.FrTimeSeriesFromAvTimeSeries(&v, date)
+		frTimeSeries, err := models.FrTimeSeriesFromAvTimeSeries(v, date)
 		if err != nil {
-			return nil, fmt.Errorf("error mapping av time series to fr time series")
+			return nil, fmt.Errorf("error mapping av time series to fr time series: %w", err)
 		}
 
 		ret = append(ret, *frTimeSeries)
@@ -57,6 +60,7 @@ func filterDays(av map[string]models.AvTimeSeries, days int) ([]models.FrTimeSer
 	return ret, nil
 }
 
+// calcAvgClose calculates the average of the close values for each time series in the slice supplied
 func calcAvgClose(ts []models.FrTimeSeries) (total float64) {
 	if len(ts) == 0 {
 		return 0
